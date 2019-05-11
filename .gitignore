@@ -13,3 +13,4 @@
 
 webapp
 *.txt
+.DS_Store
