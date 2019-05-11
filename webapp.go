@@ -18,12 +18,12 @@ type Entry struct {
 }
 
 func (p *Entry) save() error {
-    filename := p.Title + ".txt"
+    filename := "data/" + p.Title + ".txt"
     return ioutil.WriteFile(filename, p.Body, 0600)
 }
 
 func loadEntry(title string) (*Entry, error) {
-    filename := title + ".txt"
+    filename := "data/" + title + ".txt"
     body, err := ioutil.ReadFile(filename)
     if err != nil {
         return nil, err
