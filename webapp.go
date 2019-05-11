@@ -9,21 +9,21 @@ import (
     "regexp"
 )
 
-var templates = template.Must(template.ParseGlob("static/templates/*.html"))
+var templates = template.Must(template.ParseGlob("./static/templates/*.html"))
 var validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
 
 type Entry struct {
     Title string
-    Body  []byte
+    Body []byte
 }
 
 func (p *Entry) save() error {
-    filename := "data/" + p.Title + ".txt"
+    filename := "./data/" + p.Title + ".txt"
     return ioutil.WriteFile(filename, p.Body, 0600)
 }
 
 func loadEntry(title string) (*Entry, error) {
-    filename := "data/" + title + ".txt"
+    filename := "./data/" + title + ".txt"
     body, err := ioutil.ReadFile(filename)
     if err != nil {
         return nil, err
@@ -37,7 +37,7 @@ func getTitle(w http.ResponseWriter, r *http.Request) (string, error) {
         http.NotFound(w, r)
         return "", errors.New("Invalid Entry")
     }
-    return m[2], nil // The title is the second subexpression.
+    return m[2], nil
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Entry) {
@@ -61,7 +61,7 @@ func makeHandler(fn func (http.ResponseWriter, *http.Request, string)) http.Hand
 func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
     p, err := loadEntry(title)
     if err != nil {
-        http.Redirect(w, r, "/edit/"+title, http.StatusFound)
+        http.Redirect(w, r, "/edit/" + title, http.StatusFound)
         return
     }
     renderTemplate(w, "view", p)
@@ -83,7 +83,7 @@ func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }
-    http.Redirect(w, r, "/view/"+title, http.StatusFound)
+    http.Redirect(w, r, "/view/" + title, http.StatusFound)
 }
 
 func main() {
