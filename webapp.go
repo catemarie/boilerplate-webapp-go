@@ -7,6 +7,8 @@ import (
     "net/http"
 )
 
+var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
+
 type Entry struct {
     Title string
     Body  []byte
@@ -27,12 +29,7 @@ func loadEntry(title string) (*Entry, error) {
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Entry) {
-    t, err := template.ParseFiles(tmpl + ".html")
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
-    err = t.Execute(w, p)
+    err := templates.ExecuteTemplate(w, tmpl+".html", p)
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
     }
